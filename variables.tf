@@ -22,8 +22,8 @@ variable "tags" {
     }
 }
 
-//variable "password" {
-//    description = "The sqlserver password"
-//    type = string
-//    sensitive = true
-//}
+variable "password" {
+    description = "The sqlserver password"
+    type = string
+    sensitive = true
+}
