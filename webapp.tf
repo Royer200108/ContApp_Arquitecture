@@ -65,7 +65,7 @@ resource "azurerm_app_service_virtual_network_swift_connection" "webapp_bf_ui_vn
 
 //Creating the App Service for the API BackOffice webapp
 resource "azurerm_linux_web_app" "webapp_bf_api" {
-    name = "api-bf-${var.project}-${var.enviroment}"
+    name = "api-${var.project}-${var.enviroment}"
     location            = var.location
     resource_group_name = azurerm_resource_group.rg.name
     service_plan_id = azurerm_service_plan.app_service_plan_bf.id
@@ -76,6 +76,9 @@ resource "azurerm_linux_web_app" "webapp_bf_api" {
         always_on        = true
         vnet_route_all_enabled = true
     }
+
+    //Configurations to make conections with the Container Registry
+    
 
     //The dependencies for this webapp
     depends_on = [
@@ -128,6 +131,9 @@ resource "azurerm_linux_web_app" "webapp_ca_ui" {
         vnet_route_all_enabled = true
     }
 
+    //Configurations to make conections with the Container Registry
+    
+
     //The dependencies for this webapp
     depends_on = [
         azurerm_service_plan.app_service_plan_ca,
@@ -151,7 +157,7 @@ resource "azurerm_app_service_virtual_network_swift_connection" "webapp_ca_ui_vn
 
 //Creating the App Service for the API ContApp webapp
 resource "azurerm_linux_web_app" "webapp_ca_api" {
-    name = "api-ca-${var.project}-${var.enviroment}"
+    name = "api-${var.project}-${var.enviroment}"
     location            = var.location
     resource_group_name = azurerm_resource_group.rg.name
     service_plan_id = azurerm_service_plan.app_service_plan_ca.id
@@ -162,6 +168,9 @@ resource "azurerm_linux_web_app" "webapp_ca_api" {
         always_on        = true
         vnet_route_all_enabled = true
     }
+
+    //Configurations to make conections with the Container Registry
+    
 
     //The dependencies for this webapp
     depends_on = [
