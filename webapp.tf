@@ -29,24 +29,41 @@ resource "azurerm_service_plan" "app_service_plan_bf" {
 
 
 //Creating the App Service for the UI BackOffice webapp
-resource "azurerm_linux_web_app" "webapp_bf_ui" {
-    name = "ui-bf-${var.project}-${var.enviroment}"
+
+//Es la webapp de la UI
+resource "azurerm_app_service" "webapp1" {
+    name                = "ui-${var.project}-${var.enviroment}"
     location            = var.location
     resource_group_name = azurerm_resource_group.rg.name
-    service_plan_id = azurerm_service_plan.app_service_plan_bf.id
+    app_service_plan_id = azurerm_service_plan.app_service_plan.id
 
-    //Configuring the specifications to activate Docker deployments
+    //Configuraciones especificas para activar docker deployments
     site_config {
-        //linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/${var.project}/ui:latest"
+        linux_fx_version = "DOCKER|${azurerm_container_registry.acr2.login_server}/${var.project}/ui:latest"
         always_on        = true
         vnet_route_all_enabled = true
     }
 
-    //The dependencies for this webapp
+    //Configuraciones para poder hacer coneción con el container resgitry
+    app_settings = {
+        //Indica a qué container registry queremos autenticarnos
+        "DOCKER_REGISTRY_SERVER_URL"      = "https://${azurerm_container_registry.acr2.login_server}"
+        //Aqui se especifican los valores de las credenciales administrativas
+        "DOCKER_REGISTRY_SERVER_USERNAME" = azurerm_container_registry.acr2.admin_username
+        "DOCKER_REGISTRY_SERVER_PASSWORD" = azurerm_container_registry.acr2.admin_password
+        //Indica que queremos que haya comunicación entre VNets
+        "WEBSITE_VNET_ROUTE_ALL"          = "1"
+    }
+
+    //Indica de que depende este website
     depends_on = [
-        azurerm_service_plan.app_service_plan_bf,
-        azurerm_container_registry.acr,
-        azurerm_subnet.backofficesubnet
+        //depende de:
+            //App service prompot
+            //Container registry
+            //Subnets web
+        azurerm_service_plan.app_service_plan,
+        azurerm_container_registry.acr2,
+        azurerm_subnet.subnetweb
     ]
 
     tags = var.tags
