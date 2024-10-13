@@ -49,6 +49,15 @@ resource "azurerm_subnet" "backofficesubnet" {
     virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes = ["10.0.3.0/24"]
 
+//Esto se agrega especificamente para trabajar con webapps
+    //Se usan para especificar que todo IO-bound es para poder proveer el servicio web 
+    delegation {
+        name = "backoffice_delegation"
+        service_delegation {
+            name = "Microsoft.Web/serverFarms"
+            actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+        }
+    }
 }
 
 /*
@@ -61,4 +70,11 @@ resource "azurerm_subnet" "contappsubnet" {
     virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes = ["10.0.4.0/24"]
 
+    delegation {
+        name = "contapp_delegation"
+        service_delegation {
+            name = "Microsoft.Web/serverFarms"
+            actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+        }
+    }
 }
