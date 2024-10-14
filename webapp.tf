@@ -21,7 +21,7 @@ resource "azurerm_service_plan" "app_service_plan_bf" {
     resource_group_name = azurerm_resource_group.rg.name
     os_type = "Linux"
 
-    sku_name = "S1"
+    sku_name = "B1"
 
     tags = var.tags
 
@@ -29,45 +29,38 @@ resource "azurerm_service_plan" "app_service_plan_bf" {
 
 
 //Creating the App Service for the UI BackOffice webapp
-
-//Es la webapp de la UI
-resource "azurerm_app_service" "webapp1" {
-    name                = "ui-${var.project}-${var.enviroment}"
+resource "azurerm_linux_web_app" "webapp_bf_ui" {
+    name                = "ui-bf-${var.project}-${var.enviroment}"
     location            = var.location
     resource_group_name = azurerm_resource_group.rg.name
-    app_service_plan_id = azurerm_service_plan.app_service_plan.id
+    service_plan_id     = azurerm_service_plan.app_service_plan_bf.id
 
-    //Configuraciones especificas para activar docker deployments
     site_config {
-        linux_fx_version = "DOCKER|${azurerm_container_registry.acr2.login_server}/${var.project}/ui:latest"
-        always_on        = true
+        ### NEW Docker credential definition --------------------------------
+        application_stack { 
+            docker_image_name        = "bf-ui:latest"
+            docker_registry_url      = "https://${azurerm_container_registry.acr.login_server}"
+            docker_registry_username = azurerm_container_registry.acr.admin_username
+            docker_registry_password = azurerm_container_registry.acr.admin_password
+        }
+        ### ------------------------------------------------------------------
+
+        always_on        = "true"
         vnet_route_all_enabled = true
     }
 
-    //Configuraciones para poder hacer coneción con el container resgitry
     app_settings = {
-        //Indica a qué container registry queremos autenticarnos
-        "DOCKER_REGISTRY_SERVER_URL"      = "https://${azurerm_container_registry.acr2.login_server}"
-        //Aqui se especifican los valores de las credenciales administrativas
-        "DOCKER_REGISTRY_SERVER_USERNAME" = azurerm_container_registry.acr2.admin_username
-        "DOCKER_REGISTRY_SERVER_PASSWORD" = azurerm_container_registry.acr2.admin_password
-        //Indica que queremos que haya comunicación entre VNets
-        "WEBSITE_VNET_ROUTE_ALL"          = "1"
+        vnet_route_all_enabled = "1"
     }
-
-    //Indica de que depende este website
+    
+    //The dependencies for this webapp
     depends_on = [
-        //depende de:
-            //App service prompot
-            //Container registry
-            //Subnets web
-        azurerm_service_plan.app_service_plan,
-        azurerm_container_registry.acr2,
-        azurerm_subnet.subnetweb
+        azurerm_service_plan.app_service_plan_bf,
+        azurerm_container_registry.acr,
+        azurerm_subnet.backofficesubnet
     ]
 
     tags = var.tags
-
 }
 
 //Configuring the conection with outbound (it need access to the VNets too)
@@ -79,7 +72,6 @@ resource "azurerm_app_service_virtual_network_swift_connection" "webapp_bf_ui_vn
     ]
 }
 
-
 //Creating the App Service for the API BackOffice webapp
 resource "azurerm_linux_web_app" "webapp_bf_api" {
     name = "api-bf-${var.project}-${var.enviroment}"
@@ -89,9 +81,21 @@ resource "azurerm_linux_web_app" "webapp_bf_api" {
 
     //Configuring the specifications to activate Docker deployments
     site_config {
-        //linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/${var.project}/api:latest"
-        always_on        = true
+        ### NEW Docker credential definition --------------------------------
+        application_stack { 
+            docker_image_name        = "bf-api:latest"
+            docker_registry_url      = "https://${azurerm_container_registry.acr.login_server}"
+            docker_registry_username = azurerm_container_registry.acr.admin_username
+            docker_registry_password = azurerm_container_registry.acr.admin_password
+        }
+        ### ------------------------------------------------------------------
+
+        always_on        = "true"
         vnet_route_all_enabled = true
+    }
+
+    app_settings = {
+        vnet_route_all_enabled = "1"
     }
 
     //The dependencies for this webapp
@@ -140,10 +144,22 @@ resource "azurerm_linux_web_app" "webapp_ca_ui" {
 
     //Configuring the specifications to activate Docker deployments
     site_config {
-        //linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/${var.project}/ui:latest"
-        always_on        = true
+        ### NEW Docker credential definition --------------------------------
+        application_stack { 
+            docker_image_name        = "ca-ui:latest"
+            docker_registry_url      = "https://${azurerm_container_registry.acr.login_server}"
+            docker_registry_username = azurerm_container_registry.acr.admin_username
+            docker_registry_password = azurerm_container_registry.acr.admin_password
+        }
+        ### ------------------------------------------------------------------
+
+        always_on        = "true"
         vnet_route_all_enabled = true
     }
+
+    app_settings = {
+        vnet_route_all_enabled = "1"
+    }    
 
     //The dependencies for this webapp
     depends_on = [
@@ -175,9 +191,21 @@ resource "azurerm_linux_web_app" "webapp_ca_api" {
 
     //Configuring the specifications to activate Docker deployments
     site_config {
-        //linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/${var.project}/api:latest"
-        always_on        = true
+        ### NEW Docker credential definition --------------------------------
+        application_stack { 
+            docker_image_name        = "ca-api:latest"
+            docker_registry_url      = "https://${azurerm_container_registry.acr.login_server}"
+            docker_registry_username = azurerm_container_registry.acr.admin_username
+            docker_registry_password = azurerm_container_registry.acr.admin_password
+        }
+        ### ------------------------------------------------------------------
+
+        always_on        = "true"
         vnet_route_all_enabled = true
+    }
+
+    app_settings = {
+        vnet_route_all_enabled = "1"
     }
 
     //The dependencies for this webapp
