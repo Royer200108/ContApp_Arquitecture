@@ -3,3 +3,4 @@
 *.tfvars
 .terraform/
 .terraform.*
+functionapp2.tf
