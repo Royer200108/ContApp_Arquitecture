@@ -1,8 +1,8 @@
-resource "azurerm_linux_function_app" "function_app_bf" {
-    name                = "function-bf-${var.project}-${var.enviroment}"
+resource "azurerm_linux_function_app" "function_app_ca" {
+    name                = "function-ca-${var.project}-${var.enviroment}"
     location            = var.location
     resource_group_name = azurerm_resource_group.rg.name
-    service_plan_id            = azurerm_service_plan.app_service_plan_bf.id
+    service_plan_id            = azurerm_service_plan.app_service_plan_ca.id
 
     storage_account_name       = azurerm_storage_account.storage_account.name
     storage_account_access_key = azurerm_storage_account.storage_account.primary_connection_string
@@ -42,7 +42,7 @@ resource "azurerm_linux_function_app" "function_app_bf" {
     tags = var.tags
 
     depends_on = [
-        azurerm_service_plan.app_service_plan_bf,
+        azurerm_service_plan.app_service_plan_ca,
         azurerm_subnet.subnetfunction,
         azurerm_container_registry.acr
     ]
@@ -57,7 +57,7 @@ resource "azurerm_private_endpoint" "function_private_endpoint"{
 
     private_service_connection {
         name = "function-private-ec-${var.project}-${var.enviroment}"
-        private_connection_resource_id = azurerm_linux_function_app.function_app_bf.id
+        private_connection_resource_id = azurerm_linux_function_app.function_app_ca.id
         subresource_names = ["sites"]
         is_manual_connection = false
     }
