@@ -17,7 +17,7 @@ Este es un proyecto de implementación de infraestructura en Azure diseñada par
 ## Estructura de Terraform.
 Con el uso de *Terraform* se ha concebido la infraetructura de la propuesta de proyecto para una hipotética Aplicación Contable.
 
-### Recursos que contiene estr proyecto.
+### Recursos que contiene este proyecto.
 Para la realización de este proyecto se incluyeron los siguientes recursos.
 * App Service Plan.
 * Redes virtuales (VNets).
