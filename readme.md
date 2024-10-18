@@ -29,3 +29,7 @@ Para la realización de este proyecto se incluyeron los siguientes recursos.
 ### Diagrama de infraestructura.
 
 <img src="/img/Infraestructura.png">
+
+#### Enlace al video de YouTube.
+En este video se da una breve explicación del proceso de análisis, desarrollo e implementación de la infraestructura de este proyecto.
+https://www.youtube.com/watch?v=_kZEGaB1IqI&feature=youtu.be
