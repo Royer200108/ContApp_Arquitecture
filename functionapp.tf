@@ -1,3 +1,4 @@
+//Creating the Function App
 resource "azurerm_linux_function_app" "function_app_ca" {
     name                = "function-ca-${var.project}-${var.enviroment}"
     location            = var.location
@@ -9,7 +10,6 @@ resource "azurerm_linux_function_app" "function_app_ca" {
 
     
     site_config {
-        //linux_fx_version          = "DOCKER|mcr.microsoft.com/azure-functions/dotnet:4-appservice-quickstart"  # Usas una imagen Docker válida
         always_on                 = true
         vnet_route_all_enabled     = true
 
@@ -47,6 +47,7 @@ resource "azurerm_linux_function_app" "function_app_ca" {
     ]
 }
 
+//Configuring the private endpoint for the FunctionApp
 resource "azurerm_private_endpoint" "function_private_endpoint"{
 
     name = "function-private-endpoint-${var.project}-${var.enviroment}"
@@ -65,6 +66,7 @@ resource "azurerm_private_endpoint" "function_private_endpoint"{
 
 }
 
+//Configuring the DNS Zone
 resource "azurerm_private_dns_zone" "function_private_dns_zone"{
     name= "private.function-${var.project}-${var.enviroment}.azurewebsites.net"
     resource_group_name = azurerm_resource_group.rg.name
@@ -73,6 +75,7 @@ resource "azurerm_private_dns_zone" "function_private_dns_zone"{
 
 }
 
+//Configuring the DNS Records
 resource "azurerm_private_dns_a_record" "function_private_dns_a_record"{
 
     name = "function-record-${var.project}-${var.enviroment}"
@@ -83,6 +86,7 @@ resource "azurerm_private_dns_a_record" "function_private_dns_a_record"{
 
 }
 
+//Configuring the DNS Zone to be accesible from the entrey VNet 
 resource "azurerm_private_dns_zone_virtual_network_link" "function_vnet_link"{
     name = "functionlink-${var.project}-${var.enviroment}"
     resource_group_name = azurerm_resource_group.rg.name
